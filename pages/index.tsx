@@ -1,21 +1,27 @@
 // pages/index.tsx
-import { GetStaticProps } from "next";
-import Link from "next/link";
+import fs from "fs";
 import path from "path";
-import { Post, getSortedPosts } from "../lib/getPosts";
+import Link from "next/link";
 
-interface Props {
-  allPosts: Post[];
+interface Post {
+  id: string;
+  title: string;
 }
 
-export default function Home({ allPosts }: Props) {
+interface IndexProps {
+  posts: Post[];
+}
+
+export default function Index({ posts }: IndexProps) {
   return (
     <div>
-      <h1>Blog Posts</h1>
+      <h1>Sketches</h1>
       <ul>
-        {allPosts.map(({ id, title }) => (
-          <li key={id}>
-            <Link href={`/posts/${id}`}>{title}</Link>
+        {posts.map((post) => (
+          <li key={post.id}>
+            <Link href={`/sketches/${post.id}.html`}>
+              {post.id.split("-")[0]} - {post.title}
+            </Link>
           </li>
         ))}
       </ul>
@@ -23,12 +29,24 @@ export default function Home({ allPosts }: Props) {
   );
 }
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  const postsDirectory = path.join(process.cwd(), "pages", "posts");
-  const allPosts = getSortedPosts(postsDirectory);
+export async function getStaticProps() {
+  const sketchesDirectory = path.join(process.cwd(), "public/sketches");
+  const fileNames = fs.readdirSync(sketchesDirectory);
+  const posts = fileNames
+    .filter((fileName) => /\.html$/.test(fileName))
+    .map((fileName) => {
+      const id = fileName.replace(/\.html$/, "");
+      const title = id.split("-").slice(1).join(" ");
+      return {
+        id,
+        title,
+      };
+    })
+    .sort((a, b) => Number(b.id.split("-")[0]) - Number(a.id.split("-")[0]));
+
   return {
     props: {
-      allPosts,
+      posts,
     },
   };
-};
+}

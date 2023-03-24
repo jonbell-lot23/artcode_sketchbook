@@ -15,12 +15,15 @@ const PostPage: NextPage<PostProps> = ({ post }) => {
     return <div>Loading...</div>;
   }
 
-  const PostComponent = require(`./${post.fileName}`).default;
+  const htmlFileName = `${post.id}.html`;
 
   return (
     <div>
       <h1>{post.title}</h1>
-      <PostComponent />
+      <iframe
+        src={`/sketches/${htmlFileName}`}
+        style={{ width: "100%", height: "400px", border: "none" }}
+      ></iframe>
     </div>
   );
 };
@@ -28,7 +31,7 @@ const PostPage: NextPage<PostProps> = ({ post }) => {
 export default PostPage;
 
 export const getStaticPaths: GetStaticPaths = async () => {
-  const postsDirectory = path.join(process.cwd(), "pages/posts");
+  const postsDirectory = path.join(process.cwd(), "pages/posts"); // Update the directory here
   const paths = getSortedPosts(postsDirectory).map(({ id }) => ({
     params: { slug: id },
   }));
@@ -40,7 +43,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 };
 
 export const getStaticProps: GetStaticProps<PostProps> = async ({ params }) => {
-  const postsDirectory = path.join(process.cwd(), "pages/posts");
+  const postsDirectory = path.join(process.cwd(), "pages/posts"); // Update the directory here
   const allPosts = getSortedPosts(postsDirectory);
   const post = allPosts.find((p) => p.id === params.slug);
 
