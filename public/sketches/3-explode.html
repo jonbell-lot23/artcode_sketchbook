@@ -1,0 +1,61 @@
+<!-- public/sketches/experiment1.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiment 1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  </head>
+  <body>
+    <script>
+      let colors = [
+        "#FF7F50",
+        "#9ACD32",
+        "#BA55D3",
+        "#FFD700",
+        "#40E0D0",
+        "#FF69B4",
+        "#D409D4",
+        "#4F1B92",
+        "#DAA520",
+        "#00BFFF",
+      ];
+      let circles = [];
+
+      function setup() {
+        createCanvas(500, 500);
+        background("#6A5ACD"); // purple blue
+      }
+
+      function draw() {
+        background("#6A5ACD"); // purple blue
+        for (let i = 0; i < circles.length; i++) {
+          let circle = circles[i];
+          noFill();
+          stroke(circle.strokeColor);
+          strokeWeight(circle.strokeWeight);
+          ellipse(circle.x, circle.y, circle.size, circle.size);
+          circle.x += circle.dx;
+          circle.y += circle.dy;
+        }
+      }
+
+      function mouseClicked() {
+        for (let i = 0; i < 30; i++) {
+          let colorIndex = Math.floor(Math.random() * colors.length);
+          let color = colors[colorIndex];
+          let strokeColorIndex = Math.floor(Math.random() * colors.length);
+          let strokeColor = colors[strokeColorIndex];
+          let strokeWeight = Math.floor(Math.random() * 6) + 2; // random stroke thickness between 2 and 7
+          let size = Math.floor(Math.random() * 21) + 10; // random size between 10 and 30
+          let x = mouseX + Math.random() * 30 - 15; // add randomness to the explosion
+          let y = mouseY + Math.random() * 30 - 15; // add randomness to the explosion
+          let dx = Math.random() * 10 - 5; // random x velocity between -5 and 5
+          let dy = Math.random() * 10 - 5; // random y velocity between -5 and 5
+          circles.push({ x, y, size, dx, dy, strokeColor, strokeWeight });
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+<!-- public/sketches/experiment1.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiment 1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  </head>
+  <body>
+    <script>
+      let colors = [
+        "#FF7F50",
+        "#9ACD32",
+        "#BA55D3",
+        "#FFD700",
+        "#40E0D0",
+        "#FF69B4",
+        "#D409D4",
+        "#4F1B92",
+        "#DAA520",
+        "#00BFFF",
+      ];
+
+      function setup() {
+        createCanvas(500, 500);
+        background("#000"); // purple blue
+        setInterval(() => {
+          let colorIndex = Math.floor(Math.random() * colors.length);
+          let color = colors[colorIndex];
+          let strokeColorIndex = Math.floor(Math.random() * colors.length);
+          let strokeColor = colors[strokeColorIndex];
+          let strokeWeight = Math.floor(Math.random() * 6) + 2; // random stroke thickness between 2 and 7
+          let size = Math.floor(Math.random() * 21) + 10; // random size between 10 and 30
+          let x = Math.floor(Math.random() * width);
+          let y = Math.floor(Math.random() * height);
+          noFill();
+          stroke(strokeColor);
+          strokeWeight = strokeWeight;
+          ellipse(x, y, size, size);
+        }, 75); // slowed down by 50%
+      }
+    </script>
+  </body>
+</html>
