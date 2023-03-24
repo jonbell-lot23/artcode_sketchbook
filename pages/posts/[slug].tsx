@@ -1,13 +1,14 @@
 // pages/posts/[slug].tsx
-import { GetStaticPaths, GetStaticProps } from "next";
+import { GetStaticPaths, GetStaticProps, NextPage } from "next";
 import { useRouter } from "next/router";
-import { Post, getSortedPosts } from "../../lib/getPosts";
+import path from "path";
+import { Post as PostType, getSortedPosts } from "../../lib/getPosts";
 
-interface Props {
-  post: Post;
+interface PostProps {
+  post: PostType;
 }
 
-export default function PostPage({ post }: Props) {
+const PostPage: NextPage<PostProps> = ({ post }) => {
   const router = useRouter();
 
   if (router.isFallback) {
@@ -22,6 +23,30 @@ export default function PostPage({ post }: Props) {
       <PostComponent />
     </div>
   );
-}
+};
 
-export const getStaticPaths: GetStaticPaths;
+export default PostPage;
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const postsDirectory = path.join(process.cwd(), "pages/posts");
+  const paths = getSortedPosts(postsDirectory).map(({ id }) => ({
+    params: { slug: id },
+  }));
+
+  return {
+    paths,
+    fallback: false,
+  };
+};
+
+export const getStaticProps: GetStaticProps<PostProps> = async ({ params }) => {
+  const postsDirectory = path.join(process.cwd(), "pages/posts");
+  const allPosts = getSortedPosts(postsDirectory);
+  const post = allPosts.find((p) => p.id === params.slug);
+
+  return {
+    props: {
+      post,
+    },
+  };
+};
