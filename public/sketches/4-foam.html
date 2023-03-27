@@ -1,0 +1,150 @@
+<!-- public/sketches/experiment1.html -->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiment 1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  </head>
+  <body>
+    <script>
+      class Bubble {
+        constructor(x, y) {
+          this.initialPos = createVector(x, y);
+          this.pos = createVector(x, y);
+          this.vel = createVector();
+          this.acc = createVector();
+          this.size = random(4, 30);
+        }
+
+        applyForce(force) {
+          this.acc.add(force);
+        }
+
+        update() {
+          this.vel.add(this.acc);
+          this.pos.add(this.vel);
+          this.acc.mult(0);
+          this.vel.mult(0.99); // Add damping force to slow down bubbles
+        }
+
+        display() {
+          fill(255, 255, 255, 180);
+          noStroke();
+          ellipse(this.pos.x, this.pos.y, this.size);
+        }
+
+        returnToInitialPos() {
+          let returningForce = p5.Vector.sub(this.initialPos, this.pos).mult(
+            0.001
+          );
+          this.applyForce(returningForce);
+        }
+
+        isTouching(other) {
+          let distance = dist(this.pos.x, this.pos.y, other.pos.x, other.pos.y);
+          return distance < this.size / 2 + other.size / 2;
+        }
+
+        mergeWith(other) {
+          let newSize = sqrt(sq(this.size) + sq(other.size));
+          let newPosX =
+            (this.pos.x * sq(this.size) + other.pos.x * sq(other.size)) /
+            sq(newSize);
+          let newPosY =
+            (this.pos.y * sq(this.size) + other.pos.y * sq(other.size)) /
+            sq(newSize);
+          this.pos.set(newPosX, newPosY);
+          this.size = newSize;
+        }
+      }
+
+      let bgColor;
+      let targetColor;
+      let startColor;
+      let startTime;
+      let fadingIn;
+      let fadingOut;
+      let bubbles = [];
+      let numBubbles = 200;
+
+      function setup() {
+        createCanvas(windowWidth, windowHeight);
+        bgColor = color(13, 50, 13); // Dark forest green
+        targetColor = color(127, 191, 127); // Lighter green
+        startColor = bgColor;
+        startTime = 0;
+        fadingIn = false;
+        fadingOut = false;
+
+        for (let i = 0; i < numBubbles; i++) {
+          let x = random(width);
+          let y = random(height);
+          bubbles.push(new Bubble(x, y));
+        }
+      }
+
+      function draw() {
+        background(bgColor);
+
+        if (fadingIn) {
+          let t = (millis() - startTime) / 3000;
+          if (t >= 1) {
+            t = 1;
+            fadingIn = false;
+            fadingOut = true;
+            startTime = millis();
+          }
+          bgColor = lerpColor(startColor, targetColor, t);
+        } else if (fadingOut) {
+          let t = (millis() - startTime) / 10000;
+          if (t >= 1) {
+            t = 1;
+            fadingOut = false;
+          }
+          bgColor = lerpColor(targetColor, startColor, t);
+        }
+
+        for (let bubble of bubbles) {
+          bubble.returnToInitialPos();
+          bubble.update();
+          bubble.display();
+        }
+
+        for (let i = 0; i < bubbles.length; i++) {
+          for (let j = i + 1; j < bubbles.length; j++) {
+            if (bubbles[i] && bubbles[j] && bubbles[i].isTouching(bubbles[j])) {
+              bubbles[i].mergeWith(bubbles[j]);
+              bubbles.splice(j, 1);
+              j--;
+            }
+          }
+        }
+
+        for (let bubble of bubbles) {
+          bubble.returnToInitialPos();
+          bubble.update();
+          bubble.display();
+        }
+      }
+
+      function mouseClicked() {
+        if (!fadingIn && !fadingOut) {
+          fadingIn = true;
+          startTime = millis();
+        }
+
+        for (let bubble of bubbles) {
+          let direction = p5.Vector.sub(
+            bubble.pos,
+            createVector(mouseX, mouseY)
+          );
+          let distanceSq = direction.magSq();
+          let repulsionForce = direction.normalize().mult(10000 / distanceSq); // Increase the repulsion force
+          bubble.applyForce(repulsionForce);
+        }
+      }
+    </script>
+  </body>
+</html>
