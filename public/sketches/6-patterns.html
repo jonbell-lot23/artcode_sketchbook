@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiment 1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.min.js"></script>
+  </head>
+  <body>
+    <script>
+      const numCircles = 300;
+      const radius = 200;
+
+      function setup() {
+        createCanvas(windowWidth, windowHeight);
+        angleMode(DEGREES);
+      }
+
+      function draw() {
+        background("#4399FF");
+        translate(width / 2, height / 2);
+
+        let angleStep = 360 / numCircles;
+
+        for (let i = 0; i < numCircles; i++) {
+          push();
+          let currentAngle = angleStep * i;
+          rotate(currentAngle);
+          translate(radius, 0);
+          circleShape();
+          pop();
+        }
+      }
+
+      function circleShape() {
+        noFill();
+        stroke(255);
+        strokeWeight(1);
+        ellipse(0, 0, 60, 60);
+      }
+
+      function windowResized() {
+        resizeCanvas(windowWidth, windowHeight);
+      }
+    </script>
+  </body>
+</html>
