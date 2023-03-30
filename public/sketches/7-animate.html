@@ -14,16 +14,19 @@
   </style>
   <body>
     <script>
-      const numCircles = 300;
+      const numCircles = 200;
       const radius = 200;
+      const animationInterval = 1;
+      let currentAnimatedCircle = 0;
 
       function setup() {
         createCanvas(windowWidth, windowHeight);
         angleMode(DEGREES);
+        frameRate(10); // 100 milliseconds per frame
+        background("#4399FF");
       }
 
       function draw() {
-        background("#4399FF");
         translate(width / 2, height / 2);
 
         let angleStep = 360 / numCircles;
@@ -34,13 +37,25 @@
           rotate(currentAngle);
           translate(radius, 0);
           circleShape();
+
+          // Draw a line for every third circle
+          if (i === currentAnimatedCircle) {
+            stroke(255, 255, 0);
+            line(0, 0, -radius, 0);
+          }
+
           pop();
+        }
+
+        // Update the animated circle index
+        if (frameCount % animationInterval === 0) {
+          currentAnimatedCircle = (currentAnimatedCircle + 1) % numCircles;
         }
       }
 
       function circleShape() {
         noFill();
-        stroke(255);
+        stroke(0, 100, 255);
         strokeWeight(1);
         ellipse(0, 0, 60, 60);
       }
