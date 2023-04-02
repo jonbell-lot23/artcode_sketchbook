@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiment 1</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  </head>
+  <body>
+    <script>
+      document.addEventListener("keydown", function (e) {
+        if (
+          e.key === "ArrowUp" ||
+          e.key === "ArrowDown" ||
+          e.key === "ArrowLeft" ||
+          e.key === "ArrowRight"
+        ) {
+          e.preventDefault();
+        }
+      });
+
+      // Global variables
+      let maze;
+      let player;
+      let endPoint;
+      let badGuy;
+      let cellSize = 40;
+      let gameOver = false;
+
+      function setup() {
+        createCanvas(1600, 1600);
+
+        // Define the maze structure
+        maze = [
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+          [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+          [1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+          [1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+          [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1],
+          [1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1],
+          [1, 0, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1],
+          [1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+          [1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1],
+          [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        ];
+
+        // Initialize the player
+        player = {
+          x: 1,
+          y: 1,
+          color: "teal",
+        };
+
+        badGuy = {
+          x: 16,
+          y: 7,
+          color: "red",
+        };
+
+        // Initialize the end point
+        endPoint = {
+          x: 18,
+          y: 8,
+          emoji: "🍔",
+        };
+      }
+
+      function moveBadGuy() {
+        if (abs(player.x - badGuy.x) > abs(player.y - badGuy.y)) {
+          if (player.x > badGuy.x && maze[badGuy.y][badGuy.x + 1] === 0) {
+            badGuy.x += 1;
+          } else if (
+            player.x < badGuy.x &&
+            maze[badGuy.y][badGuy.x - 1] === 0
+          ) {
+            badGuy.x -= 1;
+          }
+        } else {
+          if (player.y > badGuy.y && maze[badGuy.y + 1][badGuy.x] === 0) {
+            badGuy.y += 1;
+          } else if (
+            player.y < badGuy.y &&
+            maze[badGuy.y - 1][badGuy.x] === 0
+          ) {
+            badGuy.y -= 1;
+          }
+        }
+      }
+
+      function draw() {
+        background(220);
+        moveBadGuy();
+
+        if (!gameOver) {
+          // Draw maze
+          for (let i = 0; i < maze.length; i++) {
+            for (let j = 0; j < maze[i].length; j++) {
+              if (maze[i][j] === 1) {
+                fill("black");
+              } else {
+                fill("white");
+              }
+              rect(j * cellSize, i * cellSize, cellSize, cellSize);
+            }
+          }
+
+          // Draw player
+          fill(player.color);
+          ellipse(
+            player.x * cellSize + cellSize / 2,
+            player.y * cellSize + cellSize / 2,
+            cellSize / 2,
+            cellSize / 2
+          );
+
+          // Draw bad guy
+          fill(badGuy.color);
+          ellipse(
+            badGuy.x * cellSize + cellSize / 2,
+            badGuy.y * cellSize + cellSize / 2,
+            cellSize / 2,
+            cellSize / 2
+          );
+
+          // Check if the bad guy catches the player
+          if (player.x === badGuy.x && player.y === badGuy.y) {
+            gameOver = true;
+          }
+
+          // Draw end point
+          textSize(cellSize);
+          textAlign(CENTER, CENTER);
+          text(
+            endPoint.emoji,
+            endPoint.x * cellSize + cellSize / 2,
+            endPoint.y * cellSize + cellSize / 2
+          );
+
+          // Check if the player reaches the end point
+          if (player.x === endPoint.x && player.y === endPoint.y) {
+            gameOver = true;
+          }
+        } else {
+          textSize(64);
+          textAlign(CENTER, CENTER);
+          text("Game over!", width / 2, height / 2);
+        }
+      }
+
+      function keyPressed() {
+        if (!gameOver) {
+          if (keyCode === LEFT_ARROW) {
+            if (maze[player.y][player.x - 1] === 0) {
+              player.x -= 1;
+            }
+          } else if (keyCode === RIGHT_ARROW) {
+            if (maze[player.y][player.x + 1] === 0) {
+              player.x += 1;
+            }
+          } else if (keyCode === UP_ARROW) {
+            if (maze[player.y - 1][player.x] === 0) {
+              player.y -= 1;
+            }
+          } else if (keyCode === DOWN_ARROW) {
+            if (maze[player.y + 1][player.x] === 0) {
+              player.y += 1;
+            }
+          }
+        }
+      }
+    </script>
+  </body>
+</html>
