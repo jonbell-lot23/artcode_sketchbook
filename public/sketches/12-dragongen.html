@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Random Dragon Generator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        background-color: purple;
+        color: #fff;
+      }
+      h1 {
+        font-size: 2rem;
+        color: #333;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+        font-size: 3rem;
+      }
+      li {
+        margin: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="dragon-properties"></ul>
+    <script>
+      const tribes = [
+        "MudWing",
+        "SkyWing",
+        "SeaWing",
+        "RainWing",
+        "IceWing",
+        "NightWing",
+        "SandWing",
+        "HiveWing",
+        "SilkWing",
+        "LeafWing",
+      ];
+      const genders = ["Male", "Female", "Non-binary"];
+      const ageRange = [0, 120];
+      const accessories = [
+        "Scarf",
+        "Amulet",
+        "Crown",
+        "Bracelet",
+        "Earring",
+        "Glasses",
+        "Necklace",
+        "Satchel",
+        "Belt",
+        "Armor",
+        "Anklet",
+        "Horn decoration",
+        "Wing ornament",
+        "Tail ring",
+        "Bandana",
+        "Eye patch",
+        "Claw gauntlet",
+        "Saddle",
+        "Pendant",
+        "Feathered adornment",
+        "Nose ring",
+      ];
+
+      const personalities = [
+        "Adventurous",
+        "Friendly",
+        "Intelligent",
+        "Brave",
+        "Curious",
+        "Creative",
+        "Shy",
+        "Confident",
+        "Loyal",
+        "Mysterious",
+        "Aggressive",
+        "Playful",
+        "Cunning",
+        "Charming",
+        "Wise",
+        "Timid",
+        "Resourceful",
+        "Proud",
+        "Empathetic",
+        "Stubborn",
+        "Determined",
+      ];
+
+      const dragonNames = {
+        MudWing: [
+          "Silt",
+          "Bog",
+          "Loam",
+          "Estuary",
+          "Barrow",
+          "Landslide",
+          "Gully",
+          "Quagmire",
+          "Wetland",
+          "Sludge",
+        ],
+        SkyWing: [
+          "Gale",
+          "Zephyr",
+          "Cirrus",
+          "Albatross",
+          "Stratus",
+          "Blaze",
+          "Airstrike",
+          "Tempest",
+          "Gust",
+          "Nimbus",
+        ],
+        SeaWing: [
+          "Splash",
+          "Abyss",
+          "Kraken",
+          "Tidal",
+          "Wave",
+          "Deluge",
+          "Torrent",
+          "Reef",
+          "Ripple",
+          "Jetstream",
+        ],
+        RainWing: [
+          "Bamboo",
+          "Kaleidoscope",
+          "Sundew",
+          "Tropic",
+          "Vivid",
+          "Chroma",
+          "Radiant",
+          "Blossom",
+          "Drizzle",
+          "Paradise",
+        ],
+        IceWing: [
+          "Tundra",
+          "Frostbite",
+          "Glacier",
+          "Aurora",
+          "Hailstorm",
+          "Arctic",
+          "Borealis",
+          "Blizzard",
+          "Snowdrift",
+          "Polar",
+        ],
+        NightWing: [
+          "Starry",
+          "Eclipse",
+          "Cosmic",
+          "Nebula",
+          "Astro",
+          "Dusk",
+          "Wisp",
+          "Shadow",
+          "Darkfire",
+          "Obsidian",
+        ],
+        SandWing: [
+          "Dune",
+          "Scorpion",
+          "Cactus",
+          "Sierra",
+          "Sahara",
+          "Mirage",
+          "Oasis",
+          "Quicksand",
+          "Sandstorm",
+          "Gobi",
+        ],
+        HiveWing: [
+          // Add names for HiveWing
+          "Stinger",
+          "Vespid",
+          "Swarm",
+          "Mantis",
+          "Hornet",
+          "Comet",
+          "Bumble",
+          "Cicada",
+          "Wasp",
+          "Sentry",
+        ],
+        SilkWing: [
+          // Add names for SilkWing
+          "Moth",
+          "Atlas",
+          "Fritillary",
+          "Luna",
+          "Saturn",
+          "Swallowtail",
+          "Chrysalis",
+          "Peacock",
+          "Morpho",
+          "Gossamer",
+        ],
+        LeafWing: [
+          // Add names for LeafWing
+          "Vine",
+          "Willow",
+          "Maple",
+          "Fern",
+          "Sapling",
+          "Sprout",
+          "Ivy",
+          "Birch",
+          "Cedar",
+          "Blossom",
+        ],
+      };
+
+      function getRandomDragonName(tribe) {
+        if (tribe.includes("-")) {
+          const parentTribes = tribe.split("-");
+          const name1 = getRandom(dragonNames[parentTribes[0]]);
+          const name2 = getRandom(dragonNames[parentTribes[1]]);
+          return `${name1}-${name2}`;
+        }
+        return getRandom(dragonNames[tribe]);
+      }
+
+      function getRandom(arr) {
+        return arr[Math.floor(Math.random() * arr.length)];
+      }
+
+      function getRandomAge(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+      }
+
+      function getHybrid(tribes) {
+        let tribe1 = getRandom(tribes);
+        let tribe2 = getRandom(tribes);
+        while (tribe1 === tribe2) {
+          tribe2 = getRandom(tribes);
+        }
+        return `${tribe1}-${tribe2}`;
+      }
+
+      function generateGender() {
+        const random = Math.random();
+        if (random < 0.15) {
+          return "Non-binary";
+        } else if (random < 0.575) {
+          return "Male";
+        } else {
+          return "Female";
+        }
+      }
+
+      function generateDragon() {
+        const tribeValue =
+          Math.random() < 0.15 ? getHybrid(tribes) : getRandom(tribes);
+        const accessoryValue =
+          Math.random() < 0.02
+            ? `${getRandom(accessories)} ✨`
+            : getRandom(accessories);
+
+        const properties = [
+          { label: "Name", value: getRandomDragonName(tribeValue) },
+          { label: "Tribe", value: tribeValue },
+          { label: "Gender", value: generateGender() },
+          { label: "Age", value: getRandomAge(ageRange[0], ageRange[1]) },
+          { label: "Accessory", value: accessoryValue },
+          { label: "Personality", value: getRandom(personalities) },
+        ];
+
+        const list = document.getElementById("dragon-properties");
+        list.innerHTML = "";
+
+        properties.forEach((property) => {
+          const listItem = document.createElement("li");
+          listItem.textContent = `${property.label}: ${property.value}`;
+          list.appendChild(listItem);
+        });
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        generateDragon();
+      });
+    </script>
+  </body>
+</html>

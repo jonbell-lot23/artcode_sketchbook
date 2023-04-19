@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiment 10</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <style>
+      BODY {
+        background-color: #000;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      let particles = [];
+      let numParticles = 500;
+
+      function setup() {
+        createCanvas(400, 600);
+        for (let i = 0; i < numParticles; i++) {
+          particles.push(new Particle());
+        }
+      }
+
+      function draw() {
+        // Create purple-orange background gradient
+        setGradient(
+          0,
+          0,
+          width,
+          height,
+          color(148, 0, 211),
+          color(255, 140, 0)
+        );
+
+        noStroke();
+
+        // Draw lamp container
+        fill(30, 30, 40);
+        rect(width * 0.1, 0, width * 0.8, height);
+
+        // Draw particles
+        for (let p of particles) {
+          p.update();
+          p.display();
+        }
+      }
+
+      function setGradient(x, y, w, h, c1, c2) {
+        noFill();
+        for (let i = y; i <= y + h; i++) {
+          let inter = map(i, y, y + h, 0, 1);
+          let c = lerpColor(c1, c2, inter);
+          stroke(c);
+          line(x, i, x + w, i);
+        }
+      }
+
+      class Particle {
+        constructor() {
+          this.pos = createVector(
+            random(width * 0.2, width * 0.8),
+            random(height)
+          );
+          this.vel = createVector(0, 0);
+          this.acc = createVector(0, 0);
+          this.size = random(35, 1000);
+          this.color = color(
+            random(180, 255),
+            random(40, 80),
+            random(40, 80),
+            150
+          );
+          this.noiseOffsetX = random(1000);
+          this.noiseOffsetY = random(1000);
+        }
+
+        update() {
+          this.acc.x = map(noise(this.noiseOffsetX), 0, 1, -1, 1);
+          this.acc.y = map(noise(this.noiseOffsetY), 0, 1, -1, -0.1);
+
+          this.vel.add(this.acc);
+          this.vel.limit(2);
+          this.pos.add(this.vel);
+
+          this.noiseOffsetX += 0.01;
+          this.noiseOffsetY += 0.01;
+
+          this.edges();
+        }
+
+        display() {
+          fill(this.color);
+          ellipse(this.pos.x, this.pos.y, this.size);
+        }
+
+        edges() {
+          if (
+            this.pos.x - this.size / 2 < width * 0.2 ||
+            this.pos.x + this.size / 2 > width * 0.8
+          ) {
+            this.vel.x *= -1;
+            this.acc.x *= -1;
+          }
+
+          if (this.pos.y < 0 || this.pos.y > height) {
+            this.pos.y = height;
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

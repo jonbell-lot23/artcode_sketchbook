@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Experiment 10</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  </head>
+  <body>
+    <script>
+      // P5.js sketch
+
+      let canvasWidth = 1000;
+      let canvasHeight = 800;
+
+      function setup() {
+        createCanvas(canvasWidth, canvasHeight);
+        background("#ffFF00");
+        noLoop();
+      }
+
+      function draw() {
+        for (let i = 0; i < 15; i++) {
+          let initialXPos = map(i, 0, 6, 100, canvasWidth - 100);
+          let lineWidth = map(i, 0, 3, 5, 30);
+          let amplitude = map(i, 0, 2, 10, 200);
+          drawSquigglyLine(initialXPos, lineWidth, amplitude);
+        }
+      }
+
+      function drawSquigglyLine(xPos, lineWidth, amplitude) {
+        let step = 0.015; // step for the noise function
+        let startWidth = lineWidth;
+        let startY = 0;
+        let noiseOffset = random(1000);
+        let prevX;
+
+        for (let y = 0; y < canvasHeight; y++) {
+          let currentAmplitude = map(y, 0, canvasHeight, amplitude, -amplitude);
+          let currentX =
+            xPos + noise(y * step + noiseOffset) * currentAmplitude;
+          let currentWidth = map(
+            y,
+            0,
+            canvasHeight,
+            startWidth,
+            startWidth * 0.8
+          );
+
+          if (y > 0) {
+            strokeWeight(currentWidth);
+            line(prevX, startY, currentX, startY + 10);
+          }
+
+          startY++;
+          prevX = currentX;
+        }
+      }
+    </script>
+  </body>
+</html>
